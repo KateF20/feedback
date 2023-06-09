@@ -11,7 +11,7 @@ from .models import Review
 
 class ReviewView(CreateView):
     model = Review
-    fields = ReviewForm
+    form_class = ReviewForm
     template_name = 'reviews/review.html'
     success_url = '/thank_you'
 
@@ -30,12 +30,22 @@ class ReviewListView(ListView):
     model = Review
     context_object_name = 'reviews'
 
-    def get_queryset(self):
-        base_query = super().get_queryset()
-        data = base_query.all()
-        return data
-
 
 class SingleReview(DetailView):
     template_name = 'reviews/single_review.html'
     model = Review
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        loaded_review = self.object
+        request = self.request
+        fav_id = request.session.get('fav_review')
+        context['is_fav'] = fav_id == str(loaded_review.id)  # what is this
+        return context
+
+
+class AddFavoriteView(View):
+    def post(self, request):
+        review_id = request.POST['review_id']
+        request.session['fav_review'] = review_id
+        return HttpResponseRedirect('/reviews/' + review_id)
