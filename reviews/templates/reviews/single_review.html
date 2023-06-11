@@ -1,0 +1,9 @@
+{% extends 'reviews/base.html' %}
+
+{% block title %}{{ review.user_name }}'s Review{% endblock %}
+
+{% block content %}
+    <h1>{{ review.user_name }}</h1> <!-- model name taken by default, or 'object' -->
+    <p>Rating: {{ review.rating }}</p>
+    <p>{{ review.text }}</p>
+{% endblock %}
